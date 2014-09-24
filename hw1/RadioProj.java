@@ -1,9 +1,9 @@
-/***********************************************************
- * Program Assignment #1 (CIS 461, Fall 2014)              *
- * Submitted By: Your names here !!!                        *
- * SID: Your new SIDs starting with "00"                    *
- * Date: Your submission date                              *
- ***********************************************************/
+/****************************************************************
+ * Program Assignment #1 (CIS 461, Fall 2014)                   *
+ * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
+ * SID: Your new SIDs starting with "00" (Huh?)                 *
+ * Date: 9/26/2014                                              *
+ ****************************************************************/
 
 /**
  * CIS 461: Formal Methods for Software Engineering
