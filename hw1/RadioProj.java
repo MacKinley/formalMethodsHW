@@ -15,6 +15,7 @@
  **/
 import java.lang.Thread;
 import java.lang.Math;
+import java.text.DecimalFormat;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -111,6 +112,11 @@ public class RadioProj implements Runnable, ActionListener {
 
 	@Override
 	public void run() {
+
+        // Turns our float into a string to match the double, which is also a string
+        // Hacksssssssss
+        DecimalFormat df = new DecimalFormat("##.#");
+
         while(true) {
             frequency = frequency-0.1f;
             display.setValue(frequency);
@@ -120,13 +126,17 @@ public class RadioProj implements Runnable, ActionListener {
                 Thread.sleep(40);
             } catch(Exception e) {}
 
-            // TODO fix this
-            if((int)Math.ceil((double)frequency) == freqBottom) {
+             /* This makes it stop on 88, but it keeps going down.
+              * Need to do something with the while loop.
+              */
+            if (df.format(frequency).equals(Integer.toString(freqBottom))) {
+                System.out.println(df.format(frequency));
                 return;
             }
 
             for(double i:lockFrequency) {
-                if(String.format("%.1f",frequency).equals(Double.toString(i))) {
+                if (df.format(frequency).equals(Double.toString(i))) {
+                    System.out.println(df.format(frequency));
                     return;
                 }
             }
