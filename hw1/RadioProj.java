@@ -115,6 +115,7 @@ public class RadioProj implements Runnable, ActionListener {
             frequency = frequency-0.1f;
             display.setValue(frequency);
 
+            // TODO fix this
             if((int)Math.ceil((double)frequency) == freqBottom) {
                 return;
             }
