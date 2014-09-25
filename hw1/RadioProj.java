@@ -114,6 +114,11 @@ public class RadioProj implements Runnable, ActionListener {
         while(true) {
             frequency = frequency-0.1f;
             display.setValue(frequency);
+            
+            // Pause execution so frequency changes can be seen better
+            try {
+                Thread.sleep(40);
+            } catch(Exception e) {}
 
             // TODO fix this
             if((int)Math.ceil((double)frequency) == freqBottom) {
