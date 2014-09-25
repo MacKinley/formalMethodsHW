@@ -101,6 +101,7 @@ public class RadioProj implements Runnable, ActionListener {
     //  ====>>>>> Complete the methods below this line! <<<<<====
 
 	private void scanning() {
+        //TODO disable other buttons while scanner
         Thread scanner = new Thread(this);
         scanner.start();
 	}
@@ -113,8 +114,7 @@ public class RadioProj implements Runnable, ActionListener {
 	@Override
 	public void run() {
 
-        // Turns our float into a string to match the double, which is also a string
-        // Hacksssssssss
+        // Turns our float into a string to compare with double and int
         DecimalFormat df = new DecimalFormat("##.#");
 
         while(true) {
@@ -126,17 +126,13 @@ public class RadioProj implements Runnable, ActionListener {
                 Thread.sleep(40);
             } catch(Exception e) {}
 
-             /* This makes it stop on 88, but it keeps going down.
-              * Need to do something with the while loop.
-              */
             if (df.format(frequency).equals(Integer.toString(freqBottom))) {
-                System.out.println(df.format(frequency));
+                // TODO Disable scan button when at bottom frequency
                 return;
             }
 
-            for(double i:lockFrequency) {
+            for (double i:lockFrequency) {
                 if (df.format(frequency).equals(Double.toString(i))) {
-                    System.out.println(df.format(frequency));
                     return;
                 }
             }
