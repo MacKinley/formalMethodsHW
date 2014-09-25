@@ -1,0 +1,25 @@
+GAME = ({one,two} -> win -> GAME 
+		| three -> lose -> GAME).
+
+MOVE = (ahead -> (left -> STOP
+				| right -> MOVE)).
+
+DOUBLE(N=3) = (in[i:1..N] -> out[i*2] -> DOUBLE).
+
+VARIABLE(N=2) = VARIABLE[N],
+VARIABLE[i:0..N] = (write[j:0..N] -> VARIABLE[j]
+					| read[i] -> VARIABLE[i]).
+
+const N = 2
+
+RADIO = OFF,
+
+OFF = (on -> ON[N]),
+
+ON[i:-1..N] = (off -> OFF
+					| reset -> ON[N]
+					| when(i>=0)scan -> SCANNING[i-1]
+					| when(i<0)scan -> ON[i]),
+
+SCANNING[i:-1..N] = (when(i<0) end -> ON[i]
+						| when(i>=0) lock -> ON[i]).
