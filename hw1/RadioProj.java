@@ -15,10 +15,7 @@
  * Revised on Sept. 15, 2014
  **/
 package radioproj;
-import java.lang.Thread;
-import java.lang.Math;
 
-import static java.lang.System.out;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -87,11 +84,13 @@ public class RadioProj implements Runnable, ActionListener {
 			display.turnOn();
 			frequency =  freqTop;
 			display.setValue(frequency);
+                        on.setEnabled(false);
 		}
 		else if (e.getActionCommand().equals("off")) {
 			display.turnOff();
-			// searchChannel.stop(); -- deprecated, do not use
 			searchChannel = null;
+                        on.setEnabled(true);
+                        scan.setEnabled(true);
 		}
 		else if (e.getActionCommand().equals("scan")) {
 			if (display.isOn()) scanning();
@@ -105,37 +104,47 @@ public class RadioProj implements Runnable, ActionListener {
     //  ====>>>>> Complete the methods below this line! <<<<<====
 
 	private void scanning() {
-        Thread scanner = new Thread(this);
-        scanner.start();
+        reset.setEnabled(false); 
+        off.setEnabled(false);
+        searchChannel = new Thread(this);
+        searchChannel.start();
 	}
 
 	private void reset() {
         frequency = freqTop;
         display.setValue(frequency);
+        scan.setEnabled(true);
 	}
 
 	@Override
 	public void run() {
-            DecimalFormat df = new DecimalFormat("##.#");
-        if(frequency>88.1){
-        while(true) {
-            frequency = frequency-0.1f;
-            display.setValue(frequency);
-                // Pause execution so frequency changes can be seen better
-            try {
-                Thread.sleep(40);
-            } catch(Exception e) {}
-          
-            if((int)Math.ceil((double)frequency) == freqBottom) {
-                return;
-            }
+            if(frequency>88.1){
 
-            for(double i:lockFrequency) {
-                if(String.format("%.1f",frequency).equals(Double.toString(i))) {
-                    return;
+                while(true) {
+                    frequency = frequency-0.1f;
+                    display.setValue(frequency);
+                        // Pause execution so frequency changes can be seen better
+                    try {
+                        Thread.sleep(40);
+                    } catch(Exception e) {}
+
+                    if((int)Math.ceil((double)frequency) == freqBottom) {
+                        reset.setEnabled(true); 
+                        off.setEnabled(true);
+                        scan.setEnabled(false);
+                        return;
+                    }
+
+                    for(double i:lockFrequency) {
+                        if(String.format("%.1f",frequency).equals(Double.toString(i))) {
+                            reset.setEnabled(true); 
+                            off.setEnabled(true);
+                            return;
+                        }
+                    }
                 }
-            }}
+            
         }
-	}
+    }
 }
 
