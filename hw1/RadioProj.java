@@ -83,11 +83,13 @@ public class RadioProj implements Runnable, ActionListener {
 			display.turnOn();
 			frequency =  freqTop;
 			display.setValue(frequency);
+            on.setEnabled(false);
 		}
 		else if (e.getActionCommand().equals("off")) {
 			display.turnOff();
-			// searchChannel.stop(); -- deprecated, do not use
 			searchChannel = null;
+            on.setEnabled(true);
+            scan.setEnabled(true);
 		}
 		else if (e.getActionCommand().equals("scan")) {
 			if (display.isOn()) scanning();
@@ -101,14 +103,16 @@ public class RadioProj implements Runnable, ActionListener {
     //  ====>>>>> Complete the methods below this line! <<<<<====
 
 	private void scanning() {
-        //TODO disable other buttons while scanner
-        Thread scanner = new Thread(this);
-        scanner.start();
+        reset.setEnabled(false); 
+        off.setEnabled(false);
+        searchChannel = new Thread(this);
+        searchChannel.start();
 	}
 
 	private void reset() {
         frequency = freqTop;
         display.setValue(frequency);
+        scan.setEnabled(true);
 	}
 
 	@Override
@@ -127,12 +131,16 @@ public class RadioProj implements Runnable, ActionListener {
             } catch(Exception e) {}
 
             if (df.format(frequency).equals(Integer.toString(freqBottom))) {
-                // TODO Disable scan button when at bottom frequency
+                reset.setEnabled(true); 
+                off.setEnabled(true);
+                scan.setEnabled(false);
                 return;
             }
 
             for (double i:lockFrequency) {
                 if (df.format(frequency).equals(Double.toString(i))) {
+                    reset.setEnabled(true); 
+                    off.setEnabled(true);
                     return;
                 }
             }
