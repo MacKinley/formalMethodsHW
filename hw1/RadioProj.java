@@ -1,9 +1,10 @@
-/****************************************************************
- * Program Assignment #1 (CIS 461, Fall 2014)                   *
- * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
- * SID: Your new SIDs starting with "00" (Huh?)                 *
- * Date: 9/26/2014                                              *
- ****************************************************************/
+
+/***********************************************************
+ * Program Assignment #1 (CIS 461, Fall 2014)              *
+ * Submitted By: Your names here !!!                        *
+ * SID: Your new SIDs starting with "00"                    *
+ * Date: Your submission date                              *
+ ***********************************************************/
 
 /**
  * CIS 461: Formal Methods for Software Engineering
@@ -13,10 +14,11 @@
  * @author Haiping Xu
  * Revised on Sept. 15, 2014
  **/
+package radioproj;
 import java.lang.Thread;
 import java.lang.Math;
-import java.text.DecimalFormat;
 
+import static java.lang.System.out;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -25,12 +27,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.text.DecimalFormat;
 
 public class RadioProj implements Runnable, ActionListener {
 	private final static int freqTop = 108;
 	private final static int freqBottom = 88;
 	private float frequency = freqTop;
-	private double[] lockFrequency = {105.9, 101.8, 98.5, 95.6, 92.1};
+        private float fre=0;
+	private double[] lockFrequency = {105.9, 101.8, 98.5, 95.6, 92.1,88.0};
 	private DisplayPanel display;
 	private JButton on;
 	private JButton off;
@@ -112,34 +116,26 @@ public class RadioProj implements Runnable, ActionListener {
 
 	@Override
 	public void run() {
-
-        // Turns our float into a string to match the double, which is also a string
-        // Hacksssssssss
-        DecimalFormat df = new DecimalFormat("##.#");
-
+            DecimalFormat df = new DecimalFormat("##.#");
+        if(frequency>88.1){
         while(true) {
             frequency = frequency-0.1f;
             display.setValue(frequency);
-            
-            // Pause execution so frequency changes can be seen better
+                // Pause execution so frequency changes can be seen better
             try {
                 Thread.sleep(40);
             } catch(Exception e) {}
-
-             /* This makes it stop on 88, but it keeps going down.
-              * Need to do something with the while loop.
-              */
-            if (df.format(frequency).equals(Integer.toString(freqBottom))) {
-                System.out.println(df.format(frequency));
+          
+            if((int)Math.ceil((double)frequency) == freqBottom) {
                 return;
             }
 
             for(double i:lockFrequency) {
-                if (df.format(frequency).equals(Double.toString(i))) {
-                    System.out.println(df.format(frequency));
+                if(String.format("%.1f",frequency).equals(Double.toString(i))) {
                     return;
                 }
-            }
+            }}
         }
 	}
 }
+

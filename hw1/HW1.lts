@@ -22,4 +22,4 @@ ON[i:-1..N] = (off -> OFF
 					| when(i<0)scan -> ON[i]),
 
 SCANNING[i:-1..N] = (when(i<0) end -> ON[i]
-						| when(i>=0) lock -> ON[i]).
+						| when(i>=0) lock -> ON[i]).g
