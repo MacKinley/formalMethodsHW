@@ -119,12 +119,12 @@ public class RadioProj implements Runnable, ActionListener {
     public void run() {
 
         while(frequency>=freqBottom) {
-            frequency = frequency-0.1f;
+            frequency = frequency-0.1f; // Run through frequencies one at a time
             display.setValue(frequency);
 
             // Pause execution so frequency changes can be seen better
             try {
-                //Thread.sleep(40);
+                Thread.sleep(40);
             } catch(Exception e) {}
 
             // Check if current station is in the array
@@ -136,6 +136,7 @@ public class RadioProj implements Runnable, ActionListener {
                 }
             }
 
+            // Check if we're at the bottom (frequency is never exactly 88 as a float)
             if((int)Math.floor((double)frequency) == freqBottom-1) {
                 display.setValue(freqBottom);
                 reset.setEnabled(true); 
