@@ -1,9 +1,15 @@
 
 /****************************************************************
  * Program Assignment #1 (CIS 461, Fall 2014)                   *
+<<<<<<< HEAD
  * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
  * SID: 01436482(Harry), 01238165(Mackinley), 01141214(Austin)  *
  * Date: 9/26/2014                                              *
+=======
+ * Submitted By: Harry Low, Mackinley Trudeau,  Austin Walker   *
+ * SID: Your new SIDs starting with "00"                        *
+ * Date: 09/26/2014                                             *
+
  ****************************************************************/
 
 /**
@@ -14,7 +20,6 @@
  * @author Haiping Xu
  * Revised on Sept. 15, 2014
  **/
-package radioproj;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -27,28 +32,28 @@ import javax.swing.JPanel;
 import java.text.DecimalFormat;
 
 public class RadioProj implements Runnable, ActionListener {
-	private final static int freqTop = 108;
-	private final static int freqBottom = 88;
-	private float frequency = freqTop;
-        private float fre=0;
-	private double[] lockFrequency = {105.9, 101.8, 98.5, 95.6, 92.1,88.0};
-	private DisplayPanel display;
-	private JButton on;
-	private JButton off;
-	private JButton scan;
-	private JButton reset;
+    private final static int freqTop = 108;
+    private final static int freqBottom = 88;
+    private float frequency = freqTop;
+    private float fre=0;
+    private double[] lockFrequency = {105.9, 101.8, 98.5, 95.6, 92.1,88.0};
+    private DisplayPanel display;
+    private JButton on;
+    private JButton off;
+    private JButton scan;
+    private JButton reset;
 
-	private volatile Thread searchChannel;
+    private volatile Thread searchChannel;
 
-	public void init() {
-		JFrame frame = new JFrame("FM Radio");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Container pane = frame.getContentPane();
+    public void init() {
+        JFrame frame = new JFrame("FM Radio");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container pane = frame.getContentPane();
 
- 		display=new DisplayPanel("FM Radio");
-		pane.add(display, BorderLayout.CENTER);
+        display=new DisplayPanel("FM Radio");
+        pane.add(display, BorderLayout.CENTER);
 
-		JPanel p = new JPanel();
+        JPanel p = new JPanel();
         on = new JButton("on");
         on.addActionListener(this);
         p.add(on);
@@ -65,40 +70,40 @@ public class RadioProj implements Runnable, ActionListener {
         reset.addActionListener(this);
         p.add(reset);
 
-		pane.add(p, BorderLayout.SOUTH);
+        pane.add(p, BorderLayout.SOUTH);
 
-		frame.pack();
-		frame.setSize(350, 300);
-		frame.setVisible(true);
-	}
+        frame.pack();
+        frame.setSize(350, 300);
+        frame.setVisible(true);
+    }
 
-	public static void main(String[] argv) {
-		RadioProj radio = new RadioProj();
-		radio.init();
-	}
+    public static void main(String[] argv) {
+        RadioProj radio = new RadioProj();
+        radio.init();
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		if (e.getActionCommand().equals("on")) {
-			display.turnOn();
-			frequency =  freqTop;
-			display.setValue(frequency);
-                        on.setEnabled(false);
-		}
-		else if (e.getActionCommand().equals("off")) {
-			display.turnOff();
-			searchChannel = null;
-                        on.setEnabled(true);
-                        scan.setEnabled(true);
-		}
-		else if (e.getActionCommand().equals("scan")) {
-			if (display.isOn()) scanning();
-		}
-		else if (e.getActionCommand().equals("reset")) {
-			if (display.isOn()) reset();
-		};
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        if (e.getActionCommand().equals("on")) {
+            display.turnOn();
+            frequency =  freqTop;
+            display.setValue(frequency);
+            on.setEnabled(false);
+        }
+        else if (e.getActionCommand().equals("off")) {
+            display.turnOff();
+            searchChannel = null;
+            on.setEnabled(true);
+            scan.setEnabled(true);
+        }
+        else if (e.getActionCommand().equals("scan")) {
+            if (display.isOn()) scanning();
+        }
+        else if (e.getActionCommand().equals("reset")) {
+            if (display.isOn()) reset();
+        };
+    }
 
 
     //  ====>>>>> Complete the methods below this line! <<<<<====
