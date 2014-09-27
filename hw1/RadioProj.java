@@ -1,10 +1,10 @@
 
-/***********************************************************
- * Program Assignment #1 (CIS 461, Fall 2014)              *
- * Submitted By: Your names here !!!                        *
- * SID: Your new SIDs starting with "00"                    *
- * Date: Your submission date                              *
- ***********************************************************/
+/****************************************************************
+ * Program Assignment #1 (CIS 461, Fall 2014)                   *
+ * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
+ * SID: 01436482(Harry), 01238165(Mackinley), 01141214(Austin)  *
+ * Date: 9/26/2014                                              *
+ ****************************************************************/
 
 /**
  * CIS 461: Formal Methods for Software Engineering
@@ -128,13 +128,6 @@ public class RadioProj implements Runnable, ActionListener {
                         Thread.sleep(40);
                     } catch(Exception e) {}
 
-                    if((int)Math.ceil((double)frequency) == freqBottom) {
-                        reset.setEnabled(true); 
-                        off.setEnabled(true);
-                        scan.setEnabled(false);
-                        return;
-                    }
-
                     for(double i:lockFrequency) {
                         if(String.format("%.1f",frequency).equals(Double.toString(i))) {
                             reset.setEnabled(true); 
@@ -144,7 +137,11 @@ public class RadioProj implements Runnable, ActionListener {
                     }
                 }
             
-        }
+            }
+            else {
+                 reset.setEnabled(true); 
+                 off.setEnabled(true);
+            }
     }
 }
 
