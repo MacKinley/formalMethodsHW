@@ -1,13 +1,9 @@
 
 /****************************************************************
  * Program Assignment #1 (CIS 461, Fall 2014)                   *
-<<<<<<< HEAD
+
  * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
  * SID: 01436482(Harry), 01238165(Mackinley), 01141214(Austin)  *
- * Date: 9/26/2014                                              *
-=======
- * Submitted By: Harry Low, Mackinley Trudeau,  Austin Walker   *
- * SID: Your new SIDs starting with "00"                        *
  * Date: 09/26/2014                                             *
 
  ****************************************************************/
