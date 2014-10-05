@@ -1,0 +1,191 @@
+/***********************************************************
+ * Program Assignment #2 (CIS 461, Fall 2014)              *
+ * Submitted By: Your name(s) here !!!                     *
+ * SID: Your SID(s) starting with "00"                     *
+ * Date: Your submission date                              *
+ ***********************************************************/
+
+/**
+ * CIS 461: Formal Methods for Software Engineering
+ * Museum Demonstration
+ * The museum project class: MuseumProj.java
+ *
+ * @author Haiping Xu
+ * Created on Sept. 30, 2014
+ **/
+
+package cis461.chap3.museumproj;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+@SuppressWarnings("serial")
+public class MuseumProj extends JFrame {
+    protected Thread museumControl, westExit, eastEntrance;
+    private DisplayCanvas museumDisplay, westDisplay, eastDisplay;
+    private JButton openButton, closeButton;
+    
+    public void init() {
+        setTitle("CIS 461 Multi-Threaded Program: Museum");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Set up Display
+        JPanel canvasPanel = new JPanel();
+        museumDisplay = new DisplayCanvas("Museum", Color.cyan);
+        westDisplay = new DisplayCanvas("Exit", Color.green);
+        eastDisplay = new DisplayCanvas("Entrance", Color.green);
+        museumDisplay.setSize(150, 100);
+        westDisplay.setSize(150, 100);
+        eastDisplay.setSize(150, 100);
+        canvasPanel.setLayout(new FlowLayout());
+        canvasPanel.add(westDisplay);
+        canvasPanel.add(museumDisplay);
+        canvasPanel.add(eastDisplay);
+
+        westDisplay.setDisplayType(1);   // 1: West Exit
+        museumDisplay.setDisplayType(2); // 2: Museum Display
+        eastDisplay.setDisplayType(3);   // 3: East Entrance
+        
+        // Set up Director's Buttons
+        JLabel director = new JLabel(" Director: ");
+
+        openButton = new JButton("Open Museum");
+        openButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Control.open = true;  // signals the controller that museum is open
+                museumDisplay.openWestDoor();
+                museumDisplay.openEastDoor();
+                eastDisplay.arrive(-1);
+            }
+        });
+
+        closeButton = new JButton("Close Museum");
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Control.open = false; // signals the controller that museum is closed
+                museumDisplay.closeEastDoor();
+            }
+        });
+
+        JPanel directorPanel= new JPanel();
+        directorPanel.add(director);
+        directorPanel.add(openButton);
+        directorPanel.add(closeButton);
+
+        getContentPane().add(canvasPanel, BorderLayout.CENTER);
+        getContentPane().add(directorPanel, BorderLayout.SOUTH);
+
+        pack();
+        setVisible(true);
+    }
+    
+    public DisplayCanvas getEastDisplay() {
+        return eastDisplay;
+    }
+
+    public DisplayCanvas getWestDisplay() {
+        return westDisplay;
+    }
+
+    public DisplayCanvas getMuseumDisplay() {
+        return museumDisplay;
+    }
+    
+    public void simulateArrival() {
+        int delay = (int) (Math.random() * 1000);
+        try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+        for (int j = 0; j < 37; j++) {
+            try { Thread.sleep(80); } catch (InterruptedException e) { e.printStackTrace(); }
+            if (j == 36 && Control.open) eastDisplay.arrive(-1); // if open, erase the walkingman
+            else eastDisplay.arrive(j); // walk towards the door
+        }
+    }
+    
+    public void simulateDeparture() {
+        int delay = (int) (Math.random() * 3000) + 1000;
+        try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
+        for (int j = 0; j < 37; j++) {
+            try { Thread.sleep(80); } catch (InterruptedException e) { e.printStackTrace(); }
+            if (j == 36) westDisplay.depart(-1); // erase the walkingman
+            else westDisplay.depart(j); // walk away from the door
+        }
+    }
+    
+
+    //  ====>>>>> Complete the methods below this line! <<<<<====
+    
+    // Note: you are free to add any new data fields and/or new methods below this line (if needed)
+    
+    
+    public static void main(String[] args) {
+        // the main thread serves as the director ...
+        MuseumProj museum = new MuseumProj();
+        museum.init();
+
+        // ==> 1. Add your code here!
+        
+        // create and start the threads ...
+    
+    }
+}
+
+
+class Control implements Runnable {
+    protected final static int MAX = 20;
+    protected static volatile boolean open, allowEnter, allowLeave;
+    protected static volatile int count;
+    private MuseumProj museum;
+    private DisplayCanvas display;
+
+    public Control(MuseumProj museum) {
+        this.museum = museum;
+        display = museum.getMuseumDisplay();
+    }
+
+    public void run() {
+        
+        // ==> 2. Add your code here!
+    
+    }
+}
+
+
+class EastEntrance implements Runnable {
+    protected static volatile boolean arrival;
+    private MuseumProj museum;
+    private DisplayCanvas display;
+
+    public EastEntrance(MuseumProj museum) {
+        this.museum = museum;
+        display = museum.getEastDisplay();  
+    }
+
+    public void run() {
+        
+        // ==> 3. Add your code here!
+        
+    }
+}
+
+class WestExit implements Runnable {
+    protected static volatile boolean departure;
+    private MuseumProj museum;
+    private DisplayCanvas display;
+
+    public WestExit(MuseumProj museum) {
+        this.museum = museum;
+        display = museum.getWestDisplay();
+    }
+
+    public void run() {
+
+        // ==> 4. Add your code here!
+     
+    }
+}
+
+
