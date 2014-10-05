@@ -11,8 +11,6 @@
  * Created on Sept. 30, 2014
  **/
 
-package cis461.chap3.museumproj;
-
 import java.awt.*;
 import javax.swing.ImageIcon;
 
