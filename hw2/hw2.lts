@@ -1,9 +1,19 @@
 //2-2
-const N = 2
+	//part 1
+const N = 1
 USER = (call->wait->continue->USER).
 SERVER = ([i:0..N].request->[i].service->[i].reply->SERVER).
 
 ||RESOURCE_SHARE = (user[i:0..N]:USER || SERVER) /{user[i:0..N].call/[i].request, [i:0..N].reply/user[i].wait}.
+
+	//part 2
+USERV2 = (call->(wait->continue->USERV2
+			|timeout->USERV2)).
+SERVERV2 = ([i:0..N].request->([i].service->[i].reply->SERVERV2
+							  |[i].terminate->SERVERV2)).
+
+||RESOURCE_SHAREV2 = (user[i:0..N]:USERV2 || SERVERV2) / 
+		{user[i:0..N].call/[i].request, [i:0..N].reply/user[i].wait, user[i:0..2].timeout/[i].terminate}.
 
 
 //2-3
@@ -14,4 +24,3 @@ CONTROL[i:0..M] = (when (i<M) register -> CONTROL[i+1]
 CAR = (depart -> return -> CAR).
 
 ||ROLLER_COASTER = (TURNSTILE||CONTROL||CAR) / {passengerArrive/register, depart/run, return/wait}.
-
