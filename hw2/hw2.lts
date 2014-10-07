@@ -1,9 +1,16 @@
-TURNSTILE = (passengerArrive -> TURNSTILE).
+//2-2
+const N = 2
+USER = (call->wait->continue->USER).
+SERVER = ([i:0..N].request->[i].service->[i].reply->SERVER).
 
+||RESOURCE_SHARE = (user[i:0..N]:USER || SERVER) /{user[i:0..N].call/[i].request, [i:0..N].reply/user[i].wait}.
+
+
+//2-3
+TURNSTILE = (passengerArrive -> TURNSTILE).
 CONTROL(M=5) = CONTROL[0],
 CONTROL[i:0..M] = (when (i<M) register -> CONTROL[i+1]
 				  |when (i==M) run -> wait ->CONTROL[0]).
-
 CAR = (depart -> return -> CAR).
 
 ||ROLLER_COASTER = (TURNSTILE||CONTROL||CAR) / {passengerArrive/register, depart/run, return/wait}.
