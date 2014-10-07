@@ -1,0 +1,10 @@
+TURNSTILE = (passengerArrive -> TURNSTILE).
+
+CONTROL(M=5) = CONTROL[0],
+CONTROL[i:0..M] = (when (i<M) register -> CONTROL[i+1]
+				  |when (i==M) run -> wait ->CONTROL[0]).
+
+CAR = (depart -> return -> CAR).
+
+||ROLLER_COASTER = (TURNSTILE||CONTROL||CAR) / {passengerArrive/register, depart/run, return/wait}.
+
