@@ -140,9 +140,9 @@ public class MuseumProj extends JFrame {
 
 
 class Control implements Runnable {
-    protected final static int MAX = 20;
+    protected final static int MAX = 3;
     protected static volatile boolean open, allowEnter, allowLeave;
-    protected static volatile int arrivedCount, museumCount, leftCount;
+    protected static volatile int count; // Keep track of how many people are in the museum
     private MuseumProj museum;
     private DisplayCanvas display;
 
@@ -152,9 +152,10 @@ class Control implements Runnable {
     }
 
     public void run() {
-        Control.arrivedCount = Control.MAX;
 
-        while (Control.museumCount <= Control.MAX) {
+        // This can loop constantly.
+        // Sets the state of the entrance/exit, and then updates the museum's display.
+        while (true) {
             if (Control.open) {
                 Control.allowEnter = true; 
                 Control.allowLeave = true;
@@ -164,35 +165,35 @@ class Control implements Runnable {
                 Control.allowLeave = true;
             }
 
-            display.setValue(museumCount);
+            display.setValue(Control.count);
         }
     }
 }
-
 
 class EastEntrance implements Runnable {
     protected static volatile boolean arrival;
     private MuseumProj museum;
     private DisplayCanvas display;
+    private int numArrivals; // Keep track of how many people are arriving. Starts at Control.MAX.
 
     public EastEntrance(MuseumProj museum) {
         this.museum = museum;
         display = museum.getEastDisplay();  
+        display.setValue(Control.MAX); // Display the initial value
+        numArrivals = Control.MAX;
     }
 
     public void run() {
-        while (Control.arrivedCount > 0) {
-            EastEntrance.arrival = false;
 
-            if (Control.open) {
-                museum.simulateArrival();
+        // The entrance runs until there are no more arrivals
+        while (numArrivals > 0) {
+            museum.simulateArrival();
 
-                while (!Control.allowEnter);
-                Control.arrivedCount--;
-                Control.museumCount++;
-                EastEntrance.arrival = true;
-                display.setValue(Control.arrivedCount);
-            }
+            while (!Control.allowEnter); //Wait until the door opens to let someone in
+
+            numArrivals--;
+            Control.count++;
+            display.setValue(numArrivals);
         }
     }
 }
@@ -201,22 +202,26 @@ class WestExit implements Runnable {
     protected static volatile boolean departure;
     private MuseumProj museum;
     private DisplayCanvas display;
+    private int numDepartures; // Keep track of how many people have left. Starts at 0.
 
     public WestExit(MuseumProj museum) {
         this.museum = museum;
         display = museum.getWestDisplay();
+        numDepartures = 0;
     }
 
     public void run() {
-        while (Control.leftCount <= Control.MAX) {
-            WestExit.departure = false;
 
-            if (Control.museumCount > 0 && Control.allowLeave) {
+        // The exit runs until everyone has left
+        while (numDepartures <= Control.MAX) {
+
+            // If 1+ people are in the museum and allowLeave is true, we can have a departure
+            if (Control.count > 0 && Control.allowLeave) {
                 museum.simulateDeparture();
-                Control.museumCount--;
-                Control.leftCount++;
-                WestExit.departure = true;
-                display.setValue(Control.leftCount);
+
+                Control.count--;
+                numDepartures++;
+                display.setValue(numDepartures);
             }
         }
     }
