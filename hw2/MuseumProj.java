@@ -124,10 +124,17 @@ public class MuseumProj extends JFrame {
         MuseumProj museum = new MuseumProj();
         museum.init();
 
-        // ==> 1. Add your code here!
+        Control museumControl = new Control(museum);
+        EastEntrance east = new EastEntrance(museum);
+        WestExit west = new WestExit(museum);
         
-        // create and start the threads ...
-    
+        museum.museumControl = new Thread(museumControl);
+        museum.eastEntrance = new Thread(east);
+        museum.westExit = new Thread(west);
+
+        museum.museumControl.start();
+        museum.eastEntrance.start();
+        museum.westExit.start();
     }
 }
 
@@ -135,7 +142,7 @@ public class MuseumProj extends JFrame {
 class Control implements Runnable {
     protected final static int MAX = 20;
     protected static volatile boolean open, allowEnter, allowLeave;
-    protected static volatile int count;
+    protected static volatile int arrivedCount, museumCount, leftCount;
     private MuseumProj museum;
     private DisplayCanvas display;
 
@@ -145,9 +152,20 @@ class Control implements Runnable {
     }
 
     public void run() {
-        
-        // ==> 2. Add your code here!
-    
+        Control.arrivedCount = Control.MAX;
+
+        while (Control.museumCount <= Control.MAX) {
+            if (Control.open) {
+                Control.allowEnter = true; 
+                Control.allowLeave = true;
+            }
+            else {
+                Control.allowEnter = false; 
+                Control.allowLeave = true;
+            }
+
+            display.setValue(museumCount);
+        }
     }
 }
 
@@ -163,9 +181,19 @@ class EastEntrance implements Runnable {
     }
 
     public void run() {
-        
-        // ==> 3. Add your code here!
-        
+        while (Control.arrivedCount > 0) {
+            EastEntrance.arrival = false;
+
+            if (Control.open) {
+                museum.simulateArrival();
+
+                while (!Control.allowEnter);
+                Control.arrivedCount--;
+                Control.museumCount++;
+                EastEntrance.arrival = true;
+                display.setValue(Control.arrivedCount);
+            }
+        }
     }
 }
 
@@ -180,10 +208,16 @@ class WestExit implements Runnable {
     }
 
     public void run() {
+        while (Control.leftCount <= Control.MAX) {
+            WestExit.departure = false;
 
-        // ==> 4. Add your code here!
-     
+            if (Control.museumCount > 0 && Control.allowLeave) {
+                museum.simulateDeparture();
+                Control.museumCount--;
+                Control.leftCount++;
+                WestExit.departure = true;
+                display.setValue(Control.leftCount);
+            }
+        }
     }
 }
-
-
