@@ -1,4 +1,4 @@
-//2-2
+/**** 2-2 ****/
 	//part 1
 const N = 1
 USER = (call->wait->continue->USER).
@@ -19,12 +19,25 @@ SERVERV2 = ([i:0..N].request->([i].service->[i].reply->SERVERV2
 	[i:0..N].reply / user[i].wait,
 	user[i:0..2].timeout / [i].terminate}.
 
-
-//2-3
+/**** 2-3 ****/
 TURNSTILE = (passengerArrive -> TURNSTILE).
-CONTROL(M=5) = CONTROL[0],
-CONTROL[i:0..M] = (when (i<M) register -> CONTROL[i+1]
-				  |when (i==M) run -> wait ->CONTROL[0]).
+ROLLER_CONTROL(M=5) = ROLLER_CONTROL[0],
+ROLLER_CONTROL[i:0..M] = (when(i<M) register -> ROLLER_CONTROL[i+1]
+				  |when(i==M) run -> wait -> ROLLER_CONTROL[0]).
 CAR = (depart -> return -> CAR).
 
-||ROLLER_COASTER = (TURNSTILE||CONTROL||CAR) / {passengerArrive/register, depart/run, return/wait}.
+||ROLLER_COASTER = (TURNSTILE||ROLLER_CONTROL||CAR) / {passengerArrive/register, depart/run, return/wait}.
+
+/**** 2-4 ****/
+const MAX = 5
+EAST = (arrival -> EAST).
+WEST = (departure -> WEST).
+DIRECTOR = (open -> DIRECTOR
+			|close -> DIRECTOR).
+MUSEUM_CONTROL = MUSEUM_CONTROL[0][0],
+MUSEUM_CONTROL[i:0..MAX][o:0..1] = (when(i < MAX && o == 1) allowEnter -> MUSEUM_CONTROL[i+1][o]
+								|when(i >0) allowLeave -> MUSEUM_CONTROL[i-1][o]
+								|when(o == 0) open -> MUSEUM_CONTROL[i][1]
+								|when(o == 1) close -> MUSEUM_CONTROL[i][0]).
+
+||MUSEUM = (EAST||WEST||DIRECTOR||MUSEUM_CONTROL) / {arrival/allowEnter, departure/allowLeave}.
