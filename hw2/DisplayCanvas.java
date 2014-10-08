@@ -18,7 +18,7 @@ import javax.swing.ImageIcon;
 public class DisplayCanvas extends Canvas {
     private int value = 0;
     private String title;
-    private boolean westDoorClose = false, eastDoorClose = false;
+    private boolean westDoorClose = false, eastDoorClose = true;
     private int displayType = 0;
     private boolean entering = false, leaving = false;
     private int stepEnter, stepLeave;
