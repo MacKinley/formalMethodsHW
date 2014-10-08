@@ -140,7 +140,7 @@ public class MuseumProj extends JFrame {
 
 
 class Control implements Runnable {
-    protected final static int MAX = 3;
+    protected final static int MAX = 20;
     protected static volatile boolean open, allowEnter, allowLeave;
     protected static volatile int count; // Keep track of how many people are in the museum
     private MuseumProj museum;
