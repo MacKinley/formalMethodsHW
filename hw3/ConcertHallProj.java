@@ -1,9 +1,9 @@
-/***********************************************************
- * Program Assignment #3 (CIS 461, Fall 2014)              *
- * Submitted By: Your name(s) here !!!                     *
- * SID: Your new SID(s) starting with "00"                 *
- * Date: Your submission date                              *
- ***********************************************************/
+/****************************************************************
+ * Program Assignment #3 (CIS 461, Fall 2014)                   *
+ * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
+ * SID: 01436482(Harry), 01238165(Mackinley), 01141214(Austin)  *
+ * Date: 10/08/2014                                             *
+ ****************************************************************/
 
 /**
  * CIS 461: Formal Methods for Software Engineering
@@ -15,8 +15,6 @@
  **/
 
     
-package cis461.chap4.concerthallproj;
-
 /*
  * Thread-safe singleton implementation of class ConcertHallProj
  */ 

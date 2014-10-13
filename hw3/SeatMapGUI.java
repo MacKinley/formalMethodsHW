@@ -8,8 +8,6 @@
  **/
 
 
-package cis461.chap4.concerthallproj;
-
 import javax.swing.*;
 
 import java.awt.*;
