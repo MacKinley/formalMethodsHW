@@ -2,7 +2,7 @@
  * Program Assignment #3 (CIS 461, Fall 2014)                   *
  * Submitted By: Mackinley Trudeau, Harry Low, Austin Walker    *
  * SID: 01436482(Harry), 01238165(Mackinley), 01141214(Austin)  *
- * Date: 10/08/2014                                             *
+ * Date: 10/20/2014                                             *
  ****************************************************************/
 
 /**
