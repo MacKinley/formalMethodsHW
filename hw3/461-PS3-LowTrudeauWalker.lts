@@ -11,3 +11,17 @@ LOCKED[p:P][i:C] = (when (i<N) acquire[p] -> LOCKED[p][i+1]
 			| when (i==0) release[p] -> RECURSIVE_LOCK).
 
 //Problem 3
+
+const N = 2
+range T = 1..N
+
+TERMINAL = (seat[i:T].query -> CHOOSING[i]),
+CHOOSING[i:T] = ( return -> TERMINAL | seat[i].acquire -> choose[i] -> seat[i].reserve -> seat[i].release -> TERMINAL).
+
+SEAT = (query -> SEAT 
+		| reserve -> BOOKED),
+BOOKED = (unreserve -> SEAT).
+
+LOCK = (acquire -> release -> LOCK).
+
+||CONCERTHALL = ({a,b}:TERMINAL || {a,b}::(seat[T]:SEAT) || {a,b}::(seat[T]:LOCK)).
