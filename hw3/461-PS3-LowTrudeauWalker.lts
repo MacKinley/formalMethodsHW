@@ -1,4 +1,34 @@
 //Problem 1
+const N = 19
+range T = 0..N
+range R = 0..2*N
+set VarAlpha = {value.{read[T],write[T]}}
+
+VAR = VAR[0],
+VAR[u:T] = (read[u] -> VAR[u]
+	    |write[v:T] -> VAR[v]).
+
+TURNSTILE = (go -> RUN),
+RUN = (arrive -> INCREMENT
+	|end -> TURNSTILE),
+INCREMENT = (value.read[x:T] -> value.write[x+1] -> RUN) + VarAlpha.
+
+||GARDEN = (east:TURNSTILE || west:TURNSTILE
+		|| {east,west,display}::value:VAR)
+		/{go/{east,west}.go,
+		end/{east,west}.end}.
+
+TEST = TEST[0],
+TEST[v:R]  =
+     (when (v<2*N){east.arrive,west.arrive}->TEST[v+1]
+     |end->CHECK[v]),
+CHECK[v:R] = (display.value.read[u:R] ->
+       (when (u==v) right -> TEST[v]
+       |when (u!=v) wrong -> ERROR)
+    )+{display.VarAlpha}.
+
+||TESTGARDEN = (GARDEN || TEST).
+
 
 // Problem 2
 const N = 3
@@ -11,7 +41,6 @@ LOCKED[p:P][i:C] = (when (i<N) acquire[p] -> LOCKED[p][i+1]
 			| when (i==0) release[p] -> RECURSIVE_LOCK).
 
 //Problem 3
-
 const N = 2
 range T = 1..N
 
