@@ -169,6 +169,7 @@ class Terminal extends Thread {
                 Thread.sleep(100);
             } catch (InterruptedException e) {}
            
+            // Check for double booking
             if(isSeatFree && !ch.reserveSeat(x,y,terminal)){
                 failureTimes++;
                 ch.updateFailureTimes(terminal, failureTimes);
