@@ -4,7 +4,5 @@ range C = 0..N //counter range for lock
 
 RECURSIVE_LOCK = (acquire[p:P] -> LOCKED[p][0]),
 LOCKED[p:P][i:C] = (when (i<N) acquire[p] -> LOCKED[p][i+1]
-						| when (i>0) release[p] -> LOCKED[p][i-1]
-						| when (i==0) release[p] -> RECURSIVE_LOCK).
-
-// acquire[p:P] release[p:P]
+			| when (i>0) release[p] -> LOCKED[p][i-1]
+			| when (i==0) release[p] -> RECURSIVE_LOCK).
