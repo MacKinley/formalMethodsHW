@@ -13,8 +13,8 @@
  * @author Haiping Xu
  * Created on Oct. 09, 2014
  **/
-
-    
+package concerthallproj;
+ 
 /*
  * Thread-safe singleton implementation of class ConcertHallProj
  */ 
@@ -91,6 +91,7 @@ public class ConcertHallProj {
     public static void  main(String[] args) {
         ConcertHallProj ch = ConcertHallProj.Instance;
         ch.init();
+        
     }
 
     //  ====>>>>> Complete the methods below this line! <<<<<====
@@ -107,21 +108,32 @@ public class ConcertHallProj {
     public boolean reserveSeat(int row, int column, int terminal) {
     	
     	// ==> 1. Add your code here!
-
-    	
-        return true;
+        if(querySeat(row,column)==true){
+            map[row][column] = terminal;
+            return true;}
+        else return false;
     } 
 
     public void startTerminal(int terminal) {
     	
-    	// ==> 2. Add your code here!
+   int random = (int )(Math.random() * 10 + 1);
+   int random2= (int )(Math.random() * 10 + 1);
+    // nextInt is normally exclusive of the top value,
+    // so add 1 to make it inclusive
+    reserveSeat(random, random2,terminal);
     	
     }
     
     public void stopTerminal(int terminal) {
     	
+    
     	// ==> 3. Add your code here!
-    	
+        
+            if(terminal ==1)
+                terminalA=null;
+            else if(terminal ==2)
+                terminalB=null;
+        
     }
 }
 
@@ -137,6 +149,9 @@ class Terminal extends Thread {
     public void run() {
         
     	// ==> 4. Add your code here!
-    	
+    	ch.startTerminal(terminal);
+        if(ch.isFull())
+            ch.stopTerminal(terminal);
+        
     }
 }
