@@ -38,8 +38,35 @@ DEPARTURES=(depart->DEPARTURES).
 
 //b)
 TEST1 = (arrive -> if (i<=0) then ERROR else TEST1).
-
 TEST2 = (depart -> if (i>=N) then ERROR else TEST2).
 
 ||TEST_CARPARK=(CARPARK||TEST1||TEST2).
+
+// Question 3
+// Need to look this over
+POT(M=3) = POT[M],
+POT[i:0..M] = (when (i>0) getserving -> POT[i-1]
+               | when (i==0) fillpot -> POT[M]).
+
+SAVAGE = (getserving -> SAVAGE).
+COOK = (fillpot -> COOK).
+
+||DINING_SAVAGES = ({a,b}:SAVAGE || COOK || POT(3)) /{{a,b}.getserving/getserving}.
+
+//Question 4
+// Work in progress
+const N = 10
+range R = 1..N
+range S = 0..2*N
+
+// TODO: Get each customer to be able to deposit up to N
+SAVINGSACCOUNT = SAVINGSACCOUNT[0],
+SAVINGSACCOUNT[i:S] = (when (i<N) deposit[a:1..N-i] -> SAVINGSACCOUNT[i+a]
+                       | when (i>0) withdraw[a:1..i] -> SAVINGSACCOUNT[i-a]
+                       | balance[i] -> SAVINGSACCOUNT[i]).
+
+CUSTOMER = (withdraw[i:R] -> CUSTOMER | deposit[i:R] -> CUSTOMER).
+
+||ACCOUNT_CUSTOMER = ({a,b}:CUSTOMER || {a,b}::SAVINGSACCOUNT) /{balance/
+    {a,b}.balance}.
 
