@@ -18,7 +18,6 @@ public class SavingsAccount {
         BankAccount sharedAccount = new BankAccount();
 
         // Initialize all the customers
-
         Thread[] customers = new Thread[NumCustomers];
         for (int i=0; i<NumCustomers; i++) {
             customers[i] = new Thread(new Customer(i+1, sharedAccount));
@@ -44,26 +43,22 @@ public class SavingsAccount {
             System.out.format("MaxAmount = %d MaxBalance = %d\n", MaxAmount, MaxBalance);
         }
 
-        public synchronized void deposit(int id, int amt) {
-            while (balance+amt >= MaxBalance) try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        public synchronized boolean deposit(int id, int amt) {
+            while (balance+amt >= MaxBalance) {
+                return false;
             }
             balance += amt;
             System.out.format("Customer[%d] deposited $%d...  [new balance = %d]\n", id, amt, balance);
-            notifyAll();
+            return true;
         }
 
-        public synchronized void withdraw(int id, int amt)  {
-            while (balance-amt <= 0) try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        public synchronized boolean withdraw(int id, int amt)  {
+            while (balance-amt <= 0) {
+                return false;
             }
             balance -= amt;
             System.out.format("Customer[%d] withdrew $%d...  [new balance = %d]\n", id, amt, balance);
-            notifyAll();
+            return true;
         }
     }
 
@@ -80,19 +75,25 @@ public class SavingsAccount {
         public void run() {
             Random rand = new Random();
 
-            int withdrawOrDeposit;
-            int amount;
+            int withdrawOrDeposit, amount, i=0;
+            boolean success;
 
-            for (int i=0; i< ExchangeTimes; i++) {
-                withdrawOrDeposit = rand.nextInt(id * 3);
+            while(i<ExchangeTimes) { 
+                try{
+                    Thread.sleep(rand.nextInt(1000));
+                }catch(Exception e){}
+
+                withdrawOrDeposit = rand.nextInt(2);
 
                 amount = rand.nextInt(MaxAmount) + 1;
 
-                // TODO: Somehow make it so we don't have both customers withdrawing from an empty account
-                if (withdrawOrDeposit % 3 == 0)
-                    account.deposit(id, amount);
+                if (withdrawOrDeposit == 0)
+                    success = account.deposit(id, amount);
                 else
-                    account.withdraw(id, amount);
+                    success = account.withdraw(id, amount);
+                
+                if(success)
+                    i++;
             }
         }
     }
