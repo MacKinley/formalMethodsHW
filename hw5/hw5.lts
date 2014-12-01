@@ -1,4 +1,5 @@
-SQUARE = SQUARE[7],
+// 5-1
+SQUARE = SQUARE[6],
 SQUARE[0] = (north -> STOP
 					|east -> SQUARE[1]),
 SQUARE[1] = (east -> SQUARE[2]
@@ -16,3 +17,11 @@ SQUARE[6] = (north -> SQUARE[3]),
 SQUARE[7] = (east -> SQUARE[8]),
 SQUARE[8] = (north -> SQUARE[5]
 					|west -> SQUARE[7]).
+
+// 5-2
+
+// 5-3
+
+// 5-4
+
+// 5-5
