@@ -19,10 +19,41 @@ SQUARE[8] = (north -> SQUARE[5]
              |west -> SQUARE[7]).
 
 // 5-2
+PHIL = (think ->enter->left.pickup->right.pickup->eat
+	->left.putdown->right.putdown->leave->PHIL).
+
+CHOP=(pickup->putdown->CHOP)
+||DININGPHILS=(p[i:1..5]:PHIL||forall[i:1..5]{p[i].left,p[i%5+1].right}
+		::CHOP).
+property ROOM(LIMIT=4)=ROOM[0],
+||CHECK_SAFETY=(DININGPHILS||p[1..5]::ROOM(4)).
 
 // 5-3
+i)Trace to property violation in PS:
+	b
+	a
+	b
+	b
+
+ii)TEST = (b->S2|a->S1),
+   S1 = ({a,b}->TEST),
+   S2 = (b->ERROR|a->TEST).
 
 // 5-4
+const M = 4
+
+SEMAPHORE(S=0) = SEMAPHORE[S],
+SEMAPHORE[s:0..M]=(when (s>0) p -> SEMAPHORE[s-1] | v -> SEMAPHORE[s+1]).
+
+CARPARKCONTROL = ( empty.p -> arrive -> full.v -> CARPARKCONTROL
+                  	| full.p -> depart -> empty.v -> CARPARKCONTROL).
+
+ARRIVALS=(arrive->ARRIVALS).
+DEPARTURES=(depart->DEPARTURES).
+
+||CARPARK=(ARRIVALS || CARPARKCONTROL || DEPARTURES || empty::SEMAPHORE(M)||full::SEMAPHORE(0)).
+property OVERLOAD(LIMIT=4)=OVERLOAD[0],
+||CHECK_SAFETY=(CARPARK||OVERLOAD1(4)).
 
 // 5-5
 FLAG = STATUS[0], // 0 Lowered, 1 Raised
