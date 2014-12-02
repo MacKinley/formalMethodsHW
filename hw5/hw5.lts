@@ -34,10 +34,10 @@ ROOM[i:0..LIMIT] = (when(i>0) enter->ROOM[i-1]
 
 // 5-3
 //	(a)Trace to property violation in PS:
-//		b
-//		a
-//		b
-//		b
+//		b -> b
+//		a -> b -> b -> b
+//		b -> a -> b -> b
+//		a -> a -> b -> b
 
 //	(b)
 TEST = (b->S2|a->S1),
