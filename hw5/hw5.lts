@@ -1,5 +1,5 @@
 // 5-1
-SQUARE = SQUARE[6],
+SQUARE = SQUARE[7],
 SQUARE[0] = (north -> STOP
              |east -> SQUARE[1]),
 SQUARE[1] = (east -> SQUARE[2]
@@ -19,25 +19,30 @@ SQUARE[8] = (north -> SQUARE[5]
              |west -> SQUARE[7]).
 
 // 5-2
-PHIL = (think ->enter->left.pickup->right.pickup->eat
-	->left.putdown->right.putdown->leave->PHIL).
+PHIL = (think->enter->left.pickup->right.pickup->eat
+		->left.putdown->right.putdown->leave->PHIL).
 
-CHOP=(pickup->putdown->CHOP)
-||DININGPHILS=(p[i:1..5]:PHIL||forall[i:1..5]{p[i].left,p[i%5+1].right}
-		::CHOP).
-property ROOM(LIMIT=4)=ROOM[0],
-||CHECK_SAFETY=(DININGPHILS||p[1..5]::ROOM(4)).
+CHOP = (pickup->putdown->CHOP).
+
+ROOM(LIMIT=4) = ROOM[LIMIT],
+ROOM[i:0..LIMIT] = (when(i>0) enter->ROOM[i-1]
+					| leave->ROOM[i+1]).
+
+||DININGPHILS = (p[i:1..5]:PHIL
+		||forall[i:1..5]({p[i].left,p[i%5+1].right}::CHOP)
+		||p[1..5]::ROOM(4)).
 
 // 5-3
-i)Trace to property violation in PS:
-	b
-	a
-	b
-	b
+//	(a)Trace to property violation in PS:
+//		b
+//		a
+//		b
+//		b
 
-ii)TEST = (b->S2|a->S1),
-   S1 = ({a,b}->TEST),
-   S2 = (b->ERROR|a->TEST).
+//	(b)
+TEST = (b->S2|a->S1),
+S1 = ({a,b}->TEST),
+S2 = (b->ERROR|a->TEST).
 
 // 5-4
 const M = 4
@@ -52,8 +57,8 @@ ARRIVALS=(arrive->ARRIVALS).
 DEPARTURES=(depart->DEPARTURES).
 
 ||CARPARK=(ARRIVALS || CARPARKCONTROL || DEPARTURES || empty::SEMAPHORE(M)||full::SEMAPHORE(0)).
-property OVERLOAD(LIMIT=4)=OVERLOAD[0],
-||CHECK_SAFETY=(CARPARK||OVERLOAD1(4)).
+property OVERLOAD(LIMIT=4)=OVERLOAD[0].
+||CHECK_SAFETY2=(CARPARK||OVERLOAD1(4)).
 
 // 5-5
 FLAG = STATUS[0], // 0 Lowered, 1 Raised
@@ -76,5 +81,5 @@ progress N1_PICK = {neighbor1.pick}
 progress N2_PICK = {neighbor2.pick}
 
 ||WARRING_NEIGHBORS = (NEIGHBOR1 || NEIGHBOR2 || FLAGS).
-||CHECK_SAFETY = (WARRING_NEIGHBORS || MUTEX).
+||CHECK_SAFETY3 = (WARRING_NEIGHBORS || MUTEX).
 
