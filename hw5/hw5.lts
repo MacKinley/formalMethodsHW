@@ -1,22 +1,22 @@
 // 5-1
 SQUARE = SQUARE[6],
 SQUARE[0] = (north -> STOP
-					|east -> SQUARE[1]),
+             |east -> SQUARE[1]),
 SQUARE[1] = (east -> SQUARE[2]
-					|west -> SQUARE[0]
-					|south -> SQUARE[4]),
+             |west -> SQUARE[0]
+             |south -> SQUARE[4]),
 SQUARE[2] = (west -> SQUARE[1]
-					|south -> SQUARE[5]),
+             |south -> SQUARE[5]),
 SQUARE[3] = (east -> SQUARE[4]
-					|south -> SQUARE[6]),
+             |south -> SQUARE[6]),
 SQUARE[4] = (north -> SQUARE[1]
-					|west -> SQUARE[3]),
+             |west -> SQUARE[3]),
 SQUARE[5] = (north -> SQUARE[2]
-					|south -> SQUARE[8]),
+             |south -> SQUARE[8]),
 SQUARE[6] = (north -> SQUARE[3]),
 SQUARE[7] = (east -> SQUARE[8]),
 SQUARE[8] = (north -> SQUARE[5]
-					|west -> SQUARE[7]).
+             |west -> SQUARE[7]).
 
 // 5-2
 
@@ -33,13 +33,13 @@ STATUS[i:0..1] = (raise -> STATUS[1]
 ||FLAGS = (flag1:FLAG || flag2:FLAG).
 
 NEIGHBOR1 = (flag1.raise -> (flag2.check[0] -> neighbor1.pick -> flag1.lower-> NEIGHBOR1 
-							 | flag2.check[1] -> flag1.lower -> NEIGHBOR1)).
+                             | flag2.check[1] -> flag1.lower -> NEIGHBOR1)).
 
 NEIGHBOR2 = (flag2.raise -> (flag1.check[0] -> neighbor2.pick -> flag2.lower-> NEIGHBOR2
                              | flag1.check[1] -> flag2.lower -> NEIGHBOR2)).
 
 property MUTEX = (flag2.check[0]-> neighbor1.pick -> MUTEX
-					| flag1.check[0]-> neighbor2.pick -> MUTEX).
+                  | flag1.check[0]-> neighbor2.pick -> MUTEX).
 
 progress N1_PICK = {neighbor1.pick}
 progress N2_PICK = {neighbor2.pick}
