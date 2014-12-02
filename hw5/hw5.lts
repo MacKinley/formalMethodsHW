@@ -77,8 +77,8 @@ NEIGHBOR2 = (flag2.raise -> (flag1.check[0] -> neighbor2.pick -> flag2.lower-> N
 property MUTEX = (flag2.check[0]-> neighbor1.pick -> MUTEX
                   | flag1.check[0]-> neighbor2.pick -> MUTEX).
 
-//progress N1_PICK = {neighbor1.pick}
-//progress N2_PICK = {neighbor2.pick}
+progress N1_PICK = {neighbor1.pick}
+progress N2_PICK = {neighbor2.pick}
 
 ||WARRING_NEIGHBORS = (NEIGHBOR1 || NEIGHBOR2 || FLAGS).
 ||CHECK_SAFETY3 = (WARRING_NEIGHBORS || MUTEX).
