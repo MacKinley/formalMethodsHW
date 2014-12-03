@@ -80,6 +80,5 @@ property MUTEX = (flag2.check[0]-> neighbor1.pick -> MUTEX
 progress N1_PICK = {neighbor1.pick}
 progress N2_PICK = {neighbor2.pick}
 
-||WARRING_NEIGHBORS = (NEIGHBOR1 || NEIGHBOR2 || FLAGS).
-||CHECK_SAFETY3 = (WARRING_NEIGHBORS || MUTEX).
+||WARRING_NEIGHBORS = (NEIGHBOR1 || NEIGHBOR2 || FLAGS || MUTEX).
 
