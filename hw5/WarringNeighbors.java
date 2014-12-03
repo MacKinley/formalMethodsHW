@@ -11,7 +11,7 @@ public class WarringNeighbors {
 
     public final static WarringNeighbors Instance = new WarringNeighbors();
     private final int MaxPickingTime = 3; // Each neighbor will pick berries for at most 3 seconds
-    private int totalBerries = 30; // Used so the simulation stops at some point
+    private int totalBerries = 10; // Used so the simulation stops at some point
     
     private void init() {
 
