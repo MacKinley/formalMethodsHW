@@ -1,0 +1,441 @@
+	
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
+//This class needs a character controller
+[RequireComponent(typeof(CharacterController))]
+
+public class PlayerActions : MonoBehaviour {
+	
+	#region FIELDS
+	public float speed;
+	private int currentHealth;
+	public int maxHealth;
+	public RectTransform healthTransform;
+	public float Scale=1;
+	public Text healthText;
+	public Image visualHealth;
+	private float cachedY;
+	private float minXValue;
+	private float maxXValue;
+	private float currentXValue;
+	public float cooldown;
+	private bool onCD;
+	
+	#endregion
+	
+	
+	// positioning variables
+	protected Vector3 spawningPoint;
+	
+	//handling variables
+	public float rotationSpeed = 450.0f;
+	public float walkSpeed = 5.0f;
+	public float runSpeed = 8.0f;
+	public bool isInvisible = false;
+	private int colorChange = 0;
+	//private int health = 40;
+	private bool canShoot;
+	private int ammo = 5;
+	private int ammoClip = 20;
+	private int tripMines = 5;
+	private bool isCrouched = false;
+	private int jumpSpeed = 20;
+	// for checking end level
+	private bool hasCapsule = false;
+	//private bool bulletTime = false;
+	//System
+	private Quaternion targetRotation;
+	private Quaternion target;
+	
+	//game camera
+	//public GameCamera camera;
+	//components
+	public GameObject deathExplosion;
+	public PlayerGun gun;
+	private CharacterController controller;
+	private Camera cam;
+	public GameObject PlayerBody;
+	private Vector3 standing;
+	public Text Bullets;
+	public GameObject PlayerHealth;
+	private Vector3 fullHealth;
+	private Material healthMaterial;
+	private Material lowHealthMaterial;
+	//audio components
+	public AudioClip gunShot;
+	public AudioClip reload;
+	
+	// Use this for initialization
+	void Start () {
+		//save the size of the full health bar in a variable. It can be called later
+		//standing = PlayerBody.transform.localScale;
+		//fullHealth = PlayerHealth.transform.localScale;
+		canShoot = true;
+		spawningPoint = transform.position;
+		controller = GetComponent<CharacterController> ();
+		cam = Camera.main;
+		hasCapsule = false;
+
+		//Sets all start values
+		onCD = false;
+		cachedY = healthTransform.position.y; //Caches the healthbar's start pos
+		maxXValue = healthTransform.position.x; //The max value of the xPos is the start position
+		minXValue = healthTransform.position.x-(healthTransform.rect.width /(float)3.33); //The minValue of the xPos is startPos - the width of the bar
+		//healthTransform= healthTransform.position.z - 1100;
+		currentHealth = maxHealth; //Sets the current healt to the maxHealth
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		//MouseControl ();
+		KeyboardMovement();
+
+//		invisible ();
+		checkAmmo ();
+		if(Input.GetKeyDown (KeyCode.U)){
+			dropMine ();
+		}
+		// used to test out the die function or if they fall off ledge
+		if(transform.position.y < -5.0f){
+			Die ();
+		}
+		changeColor();
+	}
+	// when the player collides with an object
+	
+	#region PROPERTIES
+	public int health
+	{
+		get { return currentHealth; }
+		set
+		{
+			currentHealth = value;
+			HandleHealthbar();
+		}
+	}
+	
+	#endregion
+	
+	
+	
+	
+	
+	
+	/// <summary>
+	/// Handles the healthbar by moving it and changing color
+	/// </summary>
+	private void HandleHealthbar()
+	{   
+		//Writes the current health in the text field
+		healthText.text = "Health: " +currentHealth;
+		
+		//Maps the min and max position to the range between 0 and max health
+		currentXValue = Map(currentHealth, 0, maxHealth, minXValue, maxXValue);
+		
+		//Sets the position of the health to simulate reduction of health
+		healthTransform.position = new Vector3(currentXValue, cachedY,1100);
+		
+		if (currentHealth > maxHealth / 2) //If we have more than 50% health we use the Green colors
+		{
+			visualHealth.color = new Color32((byte)Map(currentHealth, maxHealth / 2,maxHealth, 255, 0), 255, 0, 255);
+		}
+		else //If we have less than 50% health we use the red colors
+		{
+			visualHealth.color = new Color32(255, (byte)Map(currentHealth, 0, maxHealth / 2, 0, 255), 0, 255);
+		}
+
+	}
+	
+	
+	
+	/// <summary>
+	/// Keeps track of the  damage CD
+	/// </summary>
+	/// <returns></returns>
+	IEnumerator CoolDownDmg()
+	{
+		onCD = true; 
+		yield return new WaitForSeconds(cooldown); //Waits a while before we are able to take dmg again
+		onCD = false;
+	}
+	
+	/// <summary>
+	/// This method maps a range of number into another range
+	/// </summary>
+	/// <param name="x">The value to evaluate</param>
+	/// <param name="in_min">The minimum value of the evaluated variable</param>
+	/// <param name="in_max">The maximum value of the evaluated variable</param>
+	/// <param name="out_min">The minum number we want to map to</param>
+	/// <param name="out_max">The maximum number we want to map to</param>
+	/// <returns></returns>
+	public float Map(float x, float in_min, float in_max, float out_min, float out_max)
+	{
+		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+	}
+	void OnCollisionEnter(Collision obj){
+		if (obj.transform.tag == "EnemyBullet") {
+			if (!onCD && currentHealth > 1)
+			{
+				StartCoroutine(CoolDownDmg()); //Makes sure that we can't take damage right away
+				health -= 10; //Uses the Health Property to so that we recolor and rescale the health when we change it
+			}
+			//ResizeHealthBar();
+			checkHealth ();
+		}
+		if(obj.transform.tag == "Car"){
+			if (!onCD && currentHealth > 1)
+			{
+				StartCoroutine(CoolDownDmg()); //Makes sure that we can't take damage right away
+				health -= 50; //Uses the Health Property to so that we recolor and rescale the health when we change it
+			}
+			//ResizeHealthBar();
+			checkHealth ();
+		}
+		if (obj.transform.tag == "TripMine") {
+			Physics.IgnoreCollision(obj.collider, transform.collider);	
+		}
+	}
+	/*void ResizeHealthBar(){
+		Vector3 resize = PlayerHealth.transform.localScale;
+		resize.x -= 0.075f;
+		if (resize.x > 0.5f) {
+			PlayerHealth.renderer.material.color = Color.green;		
+		}else{
+			PlayerHealth.renderer.material.color = Color.red;		
+		}
+		PlayerHealth.transform.localScale = resize;
+	}*/
+	// Player Regains Full Health
+	public void MaxHealthIncrease(){
+		health = 100;
+		//PlayerHealth.transform.localScale = fullHealth;
+		//PlayerHealth.renderer.material.color = Color.green;
+	}
+	// check if the player's health is zero or less
+	void checkHealth(){
+		if (health <= 0) {
+			Die ();		
+		}
+	}
+	// public methods need to be accessed by other classes
+	public int getHealth(){
+		return health;
+	}
+	public void increaseTripMines(){
+		tripMines += 5;
+	}
+	public void AddAmmo(){
+		ammo++;
+	}
+	public void CapsulePickUp(){
+		hasCapsule = true;
+		print (hasCapsule);
+	}
+	public bool capsuleCheck(){
+		return hasCapsule;
+	}
+	// this function is called when the player dies... this is the basic die function, it can be changed and molded to certain needs
+	void Die(){
+		//PlayerHealth.transform.localScale = fullHealth;
+		//PlayerHealth.renderer.material.color = Color.green;
+		health = 100;
+		ammoClip = 20;
+		//this creates an instance of the particals at the players position and looks like hes exploding into pixels
+		Instantiate(deathExplosion, transform.position, Quaternion.identity);
+		// this respawns the player at his original spawn position
+		transform.position = spawningPoint;
+	}
+	
+	public void DestroyPlayer(){
+		transform.position = spawningPoint;
+	}
+	// change the players shirt color
+	void changeColor(){
+		if (Input.GetKeyDown (KeyCode.C)) {
+			if(colorChange > 3){
+				colorChange = 0;
+			}else{
+				colorChange++;
+			}
+		}
+		if(colorChange == 0){
+			PlayerBody.renderer.material.color = Color.blue;
+		}
+		if(colorChange == 1){
+			PlayerBody.renderer.material.color = Color.red;
+		}
+		if(colorChange == 2){
+			PlayerBody.renderer.material.color = Color.white;
+		}
+		if(colorChange == 3){
+			PlayerBody.renderer.material.color = Color.green;
+		}
+	}
+	// call function to drop mine
+	void dropMine(){
+		if (tripMines > 0){
+			gun.dropMine();	
+			tripMines--;
+		}
+	}
+
+	// method to allow the player to aim and control with the mouse
+	/*void MouseControl(){
+		
+		// create a vector3 and store the mouse's current position in it
+		Vector3 mousePos = Input.mousePosition;
+		// get the y distance between the camera and the player for Z axis
+		mousePos = cam.ScreenToWorldPoint (new Vector3(mousePos.x, mousePos.y, cam.transform.position.y - transform.position.y));
+		// make the rotation follow the mouse's position in the speed of Time.delta (seconds)
+		targetRotation = Quaternion.LookRotation (mousePos - new Vector3(transform.position.x, transform.position.y, transform.position.z - 5));
+		transform.eulerAngles = Vector3.up * Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetRotation.eulerAngles.y, rotationSpeed * Time.deltaTime);
+		
+		// This gets the player position everyframe
+		Vector3 input = new Vector3 (Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		
+		if (Input.GetKeyDown(KeyCode.Mouse0)) {
+			gun.shoot ();
+		}
+		
+		// This is the motion and speed check of the player
+		Vector3 motion = input;
+		motion *= (Mathf.Abs(input.x) == 1 && Mathf.Abs(input.z) == 1)? .7f : 1;
+		motion *= (Input.GetButton ("Run")) ? runSpeed : walkSpeed;
+		motion += Vector3.up * -8;
+		controller.Move(motion *3* Time.deltaTime);
+	}*/
+	//checks if the player needs to reload
+	void checkAmmo(){
+		//Bullets.text = "Originalwidth: "+healthTransform.rect.width+"||"+"Orignalx: "+healthTransform.transform.position.x+"||"+"maxX: "+maxXValue + "||"+"minX: "+minXValue+"||"+"OriginY: "+healthTransform.transform.position.y+"CachedY: "+"||"+cachedY ;
+		Bullets.text = ammoClip + "/" + ammo;
+		if (ammoClip <= 0) {
+			canShoot = false;
+		}
+	}
+	//reloads the weapon
+	void ReloadWeapon(){
+		audio.PlayOneShot(reload);
+		if(ammo > 0){
+			ammo--;
+			ammoClip = 20;
+		}
+		canShoot = true;
+	}
+	//slows down the game speed but player still moves fast... doesnt work as planned
+	/*void BulletTime(){
+		if(Input.GetKeyDown (KeyCode.B) && bulletTime){
+			walkSpeed *= 2;
+			runSpeed *= 2;
+			Time.timeScale = 0.5f;
+		}
+		if(Input.GetKeyDown (KeyCode.B) && !bulletTime){
+			Time.timeScale = 1f;
+			walkSpeed /= 2;
+		}
+
+	}*/
+	
+	//method for keyboard controls and aiming
+	void KeyboardMovement(){
+		
+		// This gets the player position everyframe
+		Vector3 input = new Vector3 (Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+		
+		// This rotates the player as it moves and if no input it will stay at the rotation it is at
+		if(Input.GetKeyDown(KeyCode.W)){
+			transform.rotation = Quaternion.Euler(0,0,0);
+		}
+		if(Input.GetKeyDown(KeyCode.S)){
+			transform.rotation = Quaternion.Euler(0,180,0);
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+		}
+		
+		if(Input.GetKeyDown(KeyCode.D)){
+			transform.rotation = Quaternion.Euler(0,90,0);
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+		}
+		
+		if(Input.GetKeyDown(KeyCode.A)){
+			transform.rotation = Quaternion.Euler(0,270,0);
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+		}
+		
+		// aiming and shooting controls
+		if(Input.GetKeyDown(KeyCode.I)){
+			if(ammoClip>0)
+				ammoClip -= 1;
+			transform.rotation = Quaternion.Euler(0,0,0);
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+			if(canShoot){
+				audio.PlayOneShot(gunShot);
+				gun.shoot();
+			}
+		}
+		if(Input.GetKeyDown(KeyCode.K)){
+			if(ammoClip>0)
+				ammoClip -= 1;
+			transform.rotation = Quaternion.Euler(0,180,0);
+			
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+			if(canShoot){
+				audio.PlayOneShot(gunShot);
+				gun.shoot();
+			}
+		}
+		
+		if(Input.GetKeyDown(KeyCode.L)){
+			if(ammoClip>0)
+				ammoClip -= 1;
+			transform.rotation = Quaternion.Euler(0,90,0);
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+			if(canShoot){
+				audio.PlayOneShot(gunShot);
+				gun.shoot();
+			}
+		}
+		
+		if(Input.GetKeyDown(KeyCode.J)){
+			if(ammoClip>0)
+				ammoClip -= 1;
+			transform.rotation = Quaternion.Euler(0,270,0);
+			
+			//PlayerHealth.transform.rotation = Quaternion.Euler (0,0,0);
+			if(canShoot){
+				audio.PlayOneShot(gunShot);
+				gun.shoot();
+			}
+		}
+		if(Input.GetKeyDown (KeyCode.N)){
+			isCrouched = !isCrouched;
+			if (isCrouched) {
+				Vector3 temp = PlayerBody.transform.position;
+				temp.y = 0.75f;
+				PlayerBody.transform.position = temp;
+				Vector3 crouchBody = PlayerBody.transform.localScale;
+				crouchBody.y = 0.5f;
+				crouchBody.x = 1.25f;
+				walkSpeed = 2.5f;
+				runSpeed = 2.5f;
+				PlayerBody.transform.localScale = crouchBody;
+			}else{
+				walkSpeed = 20.0f;
+				runSpeed = 30.0f;
+				PlayerBody.transform.localScale = standing;
+			}
+		}
+		if (Input.GetKeyDown (KeyCode.LeftAlt)) {
+			transform.position += Vector3.up*jumpSpeed*Time.deltaTime;		
+		}
+		//call the reload weapon function
+		if (Input.GetKeyDown (KeyCode.O)) {
+			ReloadWeapon();		
+		}
+		// This is the motion and speed check of the player
+		Vector3 motion = input;
+		motion *= (Mathf.Abs(input.x) == 1 && Mathf.Abs(input.z) == 1)? .7f : 1;
+		motion *= (Input.GetButton ("Run")) ? runSpeed : walkSpeed;
+		motion += Vector3.up * -8;
+		controller.Move(motion *3* Time.deltaTime);
+	}
+}
